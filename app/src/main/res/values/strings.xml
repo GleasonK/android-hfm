@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Half Foods</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_sale">Explore the Market</string>
+    <string name="title_activity_sell">Sell on the Market</string>
+
+    <!--Preference-->
+    <string name="half_food_preference_file">HALF_FOOD_PREFERENCE</string>
+    <string name="half_food_preference_id">HALF_FOOD_PREFERENCE_ID</string>
+    <string name="half_food_preference_username">HALF_FOOD_PREFERENCE_USERNAME</string>
+    <string name="half_food_preference_password">HALF_FOOD_PREFERENCE_PASSWORD</string>
+    <string name="half_food_preference_session">HALF_FOOD_PREFERENCE_SESSION</string>
+
+</resources>

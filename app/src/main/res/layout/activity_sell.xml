@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="me.kevingleason.halffoods.sell.SellActivity"
+    android:background="#468fb895">
+
+    <ImageView
+        android:id="@+id/sell_take_photo"
+        android:src="@drawable/no_photo"
+        android:layout_margin="@dimen/sell_food_layout_margin"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerHorizontal="true"
+        android:onClick="photoEvent"/>
+
+    <EditText
+        android:id="@+id/sell_food_name"
+        android:layout_below="@id/sell_take_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/sell_food_layout_margin"
+        android:inputType="textCapSentences"
+        android:textSize="26sp"
+        android:gravity="center"
+        android:textColor="@color/lighter_green"
+        android:hint="Food Name"/>
+
+    <EditText
+        android:id="@+id/sell_food_price"
+        android:gravity="center"
+        android:layout_below="@+id/sell_food_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/sell_food_layout_margin"
+        android:textSize="26sp"
+        android:textColor="@color/lighter_green"
+        android:inputType="numberDecimal"
+        android:text="$0.00"
+        android:hint="Price"/>
+
+
+    <Button
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@color/lighter_green"
+        android:textColor="@color/white"
+        android:textSize="26sp"
+        android:text="Sell"
+        android:onClick="sellAction"/>
+
+</RelativeLayout>
