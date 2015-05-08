@@ -53,11 +53,11 @@ public class FoodDataAsync extends AsyncTask<Void, Void, List<FoodItem>> {
                 JSONObject foodJson = jsonArray.getJSONObject(i);
                 FoodItem foodItem = new FoodItem(
                         foodJson.getString("name"),
-                        "Kevin Gleason", //TODO Need seller ID and Seller name
-                        0, //foodJson.getInt("seller_id"), //TODO Val cant be null
+                        foodJson.getString("created_at"), //TODO Need seller ID and Seller name
+                        foodJson.getInt("seller_id"), //TODO Val cant be null
                         foodJson.getBoolean("for_sale"),
-                        foodJson.getString("image_file_name"),
-                        "Chestnut Hill, MA", //TODO Need the location
+                        foodJson.getString("image_url"),
+                        foodJson.getString("seller_location"), //TODO Need the location
                         foodJson.getDouble("price")
                 );
                 foodItems.add(foodItem);

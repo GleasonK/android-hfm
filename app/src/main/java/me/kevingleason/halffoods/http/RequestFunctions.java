@@ -3,7 +3,9 @@ package me.kevingleason.halffoods.http;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -14,16 +16,24 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.jar.Attributes;
 
 import me.kevingleason.halffoods.util.HFConfig;
 
@@ -79,6 +89,44 @@ public class RequestFunctions {
             }
         }
     }
+
+    public static String executeHttpPostHeaders(String toUrl, ArrayList<NameValuePair> headers, ArrayList<NameValuePair> postParameters) throws IOException {
+        String line;
+        StringBuffer jsonString = new StringBuffer();
+        try {
+
+            URL url = new URL(toUrl);
+
+            JSONObject jsonObject = new JSONObject();
+            for(NameValuePair nvp : postParameters ){
+                jsonObject.put(nvp.getName(),nvp.getValue());
+            }
+            String payload = jsonObject.toString();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setRequestMethod("POST");
+
+            connection.setRequestProperty("Content-type","application/json");
+            connection.setRequestProperty("Accept","application/json");
+
+            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
+            writer.write(payload);
+            writer.close();
+            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            while ((line = br.readLine()) != null) {
+                jsonString.append(line);
+            }
+            br.close();
+            connection.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return jsonString.toString();
+    }
+
 
     /**
      * Performs an HTTP GET request to the specified url.

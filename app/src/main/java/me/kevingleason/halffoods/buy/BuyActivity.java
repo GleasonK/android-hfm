@@ -27,6 +27,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.MapFragment;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -58,6 +60,13 @@ public class BuyActivity extends FragmentActivity implements ActionBar.TabListen
         final ActionBar actionBar = getActionBar();
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mAppSectionsPagerAdapter);
+        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int i) {
+                actionBar.setSelectedNavigationItem(i);
+            }
+        });
+
 
         List<FoodItem> foodItems = new ArrayList<FoodItem>();
         FoodDataAsync foodDataAsync = new FoodDataAsync(this, foodItems);
@@ -115,8 +124,6 @@ public class BuyActivity extends FragmentActivity implements ActionBar.TabListen
         return super.onOptionsItemSelected(item);
     }
 
-
-
     public boolean isOnline() {
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -139,7 +146,7 @@ public class BuyActivity extends FragmentActivity implements ActionBar.TabListen
                     return new AllItemsFragment();
 
                 default:
-                    return new AllItemsFragment();
+                    return new MyMapFragment();
             }
         }
 
@@ -150,7 +157,12 @@ public class BuyActivity extends FragmentActivity implements ActionBar.TabListen
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return "Section " + (position + 1);
+            switch (position){
+                case 0:
+                    return "Explore";
+                default:
+                    return "Search";
+            }
         }
     }
 

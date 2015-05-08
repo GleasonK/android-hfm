@@ -5,7 +5,7 @@ package me.kevingleason.halffoods.adt;
  */
 public class FoodItem {
     private String foodName;
-    private String seller;
+    private String created;
     private int sellerID;
     private boolean forSale;
     private String image;
@@ -16,7 +16,7 @@ public class FoodItem {
     public FoodItem(String foodName, String seller, int sellerID,
             boolean forSale, String image,  String location, double price){
         this.foodName=foodName;
-        this.seller=seller;
+        this.created=seller;
         this.sellerID=sellerID;
         this.forSale=forSale;
         this.image=image;
@@ -45,7 +45,7 @@ public class FoodItem {
     }
 
     public String getSeller() {
-        return seller;
+        return created;
     }
 
     public String getFoodName() {

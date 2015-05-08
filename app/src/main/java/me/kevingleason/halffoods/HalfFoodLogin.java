@@ -1,4 +1,4 @@
-package me.kevingleason.halffoods.login;
+package me.kevingleason.halffoods;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -42,7 +42,9 @@ import java.util.concurrent.ExecutionException;
 
 import me.kevingleason.halffoods.MainActivity;
 import me.kevingleason.halffoods.R;
+import me.kevingleason.halffoods.adt.User;
 import me.kevingleason.halffoods.http.RequestFunctions;
+import me.kevingleason.halffoods.util.Auth;
 import me.kevingleason.halffoods.util.HFConfig;
 
 /**
@@ -92,7 +94,9 @@ public class HalfFoodLogin extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
+        SharedPreferences sp = getSharedPreferences(getString(R.string.half_food_preference_file), MODE_PRIVATE);
+        boolean userIsSet = sp.contains(getString(R.string.half_food_preference_username)) &&
+                sp.contains(getString(R.string.half_food_preference_password));
         // Set up the login form.
 //        Typeface brightonBold = Typeface.createFromAsset(this.getAssets(), "fonts/Brighton Bold Plain.ttf");
         mUserView = (EditText) findViewById(R.id.username);
@@ -130,6 +134,22 @@ public class HalfFoodLogin extends Activity {
         mUserView.setImeActionLabel("Next", KeyEvent.KEYCODE_ENTER);
         mPasswordView.setImeActionLabel("Sign In", KeyEvent.KEYCODE_ENTER);
         setFont(mUserLabel, mPassLabel, mSignInButton);
+        if (userIsSet) {
+            try {
+                User user = Auth.getUserInfo(this);
+                mAuthTask = new UserLoginTask(user.getEmail(), user.getPassword());
+                boolean loggedIn = mAuthTask.execute((Void) null).get();
+                if (loggedIn) {
+                    startActivity(new Intent(this, MainActivity.class));
+                } else {
+                    mUserView.setError("Invalid username or password.");
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -287,40 +307,44 @@ public class HalfFoodLogin extends Activity {
         protected Boolean doInBackground(Void... params) {
             // Do Post
             ArrayList<NameValuePair> kvp = new ArrayList<NameValuePair>();
-            kvp.add(new BasicNameValuePair("username", mEmail));
-            kvp.add(new BasicNameValuePair("password", mPassword));
-            JSONObject json = null;
-            return true;
+            ArrayList<NameValuePair> headers = new ArrayList<NameValuePair>();
 
-            //TODO Dont always return true
-//            try {
-//                String response = RequestFunctions.executeHttpPost(HFConfig.POST_SIGN_IN_URL, kvp);
-//                json = new JSONObject(response);
-//                Log.d("LOGIN","FiftyLogin " + json.toString());
-//                if (json.getBoolean("success")){
-//                    JSONObject userJSON = json.getJSONObject("user");
-//                    SharedPreferences sp = getSharedPreferences(getString(R.string.half_food_preference_file),MODE_PRIVATE);
-//                    SharedPreferences.Editor editor = sp.edit();
-//                    editor.putInt(getString(R.string.half_food_preference_id),userJSON.getInt("id"));
-//                    editor.putString(getString(R.string.half_food_preference_username), userJSON.getString("username"));
-//                    editor.putString(getString(R.string.half_food_preference_password), mPassword);
-//                    //Commit since it cannot be done in background, need values before next screen loads.
-//                    editor.commit();
-//                    return true;
-//                }
-//                else {
-//                    mErrorMessage=json.getString("reason");
-//                    return false;
-//                }
-//            }
-//            catch (IOException e){ e.printStackTrace(); }
-//            catch (JSONException e){ e.printStackTrace(); }
-//
-//            if (json == null) {
-//                mPasswordView.setError("ERROR: Could not connect");
-//                return false;
-//            }
-//            return false;
+            kvp.add(new BasicNameValuePair("email", mEmail));
+            kvp.add(new BasicNameValuePair("password", mPassword));
+
+            headers.add(new BasicNameValuePair("Content-type","application/json"));
+            headers.add(new BasicNameValuePair("Accept","application/json"));
+
+            JSONObject json = null;
+            try {
+                String response = RequestFunctions.executeHttpPostHeaders(HFConfig.POST_SIGN_IN_URL, headers, kvp);
+                json = new JSONObject(response);
+                Log.d("LOGIN","AgoraLogin " + json.toString());
+                if (json.getBoolean("success")){
+                    JSONObject userJSON = json.getJSONObject("user");
+                    SharedPreferences sp = getSharedPreferences(getString(R.string.half_food_preference_file),MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putInt(getString(R.string.half_food_preference_id),userJSON.getInt("id"));
+                    editor.putString(getString(R.string.half_food_preference_username), userJSON.getString("email"));
+                    editor.putString(getString(R.string.half_food_preference_password), mPassword);
+                    editor.putString(getString(R.string.half_food_preference_auth), userJSON.getString("auth_token"));
+                    //Commit since it cannot be done in background, need values before next screen loads.
+                    editor.commit();
+                    return true;
+                }
+                else {
+                    mErrorMessage=json.getString("message");
+                    return false;
+                }
+            }
+            catch (IOException e){ e.printStackTrace(); }
+            catch (JSONException e){ e.printStackTrace(); }
+
+            if (json == null) {
+                mPasswordView.setError("ERROR: Could not connect");
+                return false;
+            }
+            return false;
 
             // TODO: register the new account here.
 

@@ -23,7 +23,7 @@
         android:textSize="26sp"
         android:gravity="center"
         android:textColor="@color/lighter_green"
-        android:hint="Food Name"/>
+        android:hint="Item Name"/>
 
     <EditText
         android:id="@+id/sell_food_price"

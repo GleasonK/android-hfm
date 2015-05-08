@@ -30,7 +30,7 @@
         <item name="android:topDark">@color/dark_green</item>
     </style>
 
-    <style name="AppTheme.ActionBar" parent="android:Widget.Holo.ActionBar">
+    <style name="AppTheme.ActionBar" parent="android:Widget.Holo.Light.ActionBar">
         <item name="android:height">60dp</item>
         <item name="android:background">@color/white</item>
         <item name="android:titleTextStyle">@style/MyTheme.ActionBar.TitleTextStyle</item>
